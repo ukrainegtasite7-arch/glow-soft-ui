@@ -68,16 +68,21 @@ const CategoriesPage = () => {
                 key={group.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ 
+                  y: -8, 
+                  scale: 1.02,
+                  transition: { duration: 0.3, ease: "easeOut" }
+                }}
                 transition={{ duration: 0.4, delay: gi * 0.05 }}
-                className="bg-card rounded-3xl p-6 shadow-soft border border-border/50"
+                className="bg-card rounded-3xl p-6 shadow-soft border border-border/50 hover:shadow-soft-lg hover:border-accent/20 transition-all duration-300 transform-gpu cursor-pointer"
               >
-                <h2 className="text-xl font-semibold mb-4">{group.title}</h2>
+                <h2 className="text-xl font-semibold mb-4 text-foreground group-hover:text-accent transition-colors duration-300">{group.title}</h2>
                 <ul className="space-y-2">
                   {group.items.map((item) => (
                     <li key={item.href}>
                       <Link
                         to={item.href}
-                        className="block rounded-xl px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-background-secondary transition-colors"
+                        className="block rounded-xl px-4 py-3 text-sm text-muted-foreground hover:text-accent hover:bg-accent/10 transition-all duration-300 hover:translate-x-2 hover:shadow-sm transform-gpu"
                       >
                         {item.title}
                       </Link>

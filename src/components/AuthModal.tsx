@@ -50,10 +50,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-card rounded-3xl p-8 shadow-soft-lg border border-border/50 w-full max-w-md mx-4"
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+        className="bg-card rounded-3xl p-8 shadow-soft-lg border border-border/50 w-full max-w-md mx-4 transform-gpu"
       >
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">
@@ -63,7 +64,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="rounded-full"
+            className="rounded-full hover:bg-destructive/10 hover:text-destructive transition-all duration-300"
           >
             <X className="w-5 h-5" />
           </Button>
@@ -104,7 +105,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
           <Button
             type="submit"
-            className="w-full btn-accent rounded-2xl"
+            className="w-full btn-accent rounded-2xl transform-gpu transition-all duration-300 hover:shadow-glow"
             disabled={loading}
           >
             {loading ? 'Завантаження...' : (isLogin ? 'Увійти' : 'Зареєструватися')}
@@ -118,7 +119,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           <Button
             variant="link"
             onClick={() => setIsLogin(!isLogin)}
-            className="text-accent hover:text-accent-light"
+            className="text-accent hover:text-accent-light transition-all duration-300 hover:scale-105"
           >
             {isLogin ? 'Зареєструватися' : 'Увійти'}
           </Button>

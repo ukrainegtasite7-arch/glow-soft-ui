@@ -33,8 +33,13 @@ const Index = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ 
+                y: -5, 
+                scale: 1.02,
+                transition: { duration: 0.3 }
+              }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="bg-card rounded-3xl p-8 shadow-soft border border-border/50"
+              className="bg-card rounded-3xl p-8 shadow-soft border border-border/50 hover:shadow-soft-lg hover:border-accent/20 transition-all duration-300 transform-gpu cursor-pointer"
             >
               <h3 className="text-xl font-semibold mb-4">Різноманітні категорії</h3>
               <p className="text-muted-foreground">
@@ -45,8 +50,13 @@ const Index = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ 
+                y: -5, 
+                scale: 1.02,
+                transition: { duration: 0.3 }
+              }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-card rounded-3xl p-8 shadow-soft border border-border/50"
+              className="bg-card rounded-3xl p-8 shadow-soft border border-border/50 hover:shadow-soft-lg hover:border-accent/20 transition-all duration-300 transform-gpu cursor-pointer"
             >
               <h3 className="text-xl font-semibold mb-4">Безпека та надійність</h3>
               <p className="text-muted-foreground">
@@ -57,8 +67,13 @@ const Index = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ 
+                y: -5, 
+                scale: 1.02,
+                transition: { duration: 0.3 }
+              }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="bg-card rounded-3xl p-8 shadow-soft border border-border/50"
+              className="bg-card rounded-3xl p-8 shadow-soft border border-border/50 hover:shadow-soft-lg hover:border-accent/20 transition-all duration-300 transform-gpu cursor-pointer"
             >
               <h3 className="text-xl font-semibold mb-4">Підтримка 24/7</h3>
               <p className="text-muted-foreground">

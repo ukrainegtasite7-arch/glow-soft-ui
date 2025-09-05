@@ -1,5 +1,4 @@
 import { supabase } from '@/integrations/supabase/client';
-import bcrypt from 'bcryptjs';
 
 export interface User {
   id: string;
@@ -14,21 +13,32 @@ export interface AuthState {
   loading: boolean;
 }
 
-// Hash password
-export const hashPassword = async (password: string): Promise<string> => {
-  const salt = await bcrypt.genSalt(10);
-  return bcrypt.hash(password, salt);
-};
-
-// Verify password
-export const verifyPassword = async (password: string, hash: string): Promise<boolean> => {
-  return bcrypt.compare(password, hash);
+// Simple hash function for passwords (for demo purposes)
+const simpleHash = (str: string): string => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return hash.toString();
 };
 
 // Register user
 export const registerUser = async (nickname: string, password: string) => {
   try {
-    const passwordHash = await hashPassword(password);
+    // Check if user already exists
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('id')
+      .eq('nickname', nickname)
+      .single();
+
+    if (existingUser) {
+      throw new Error('Користувач з таким нікнеймом вже існує');
+    }
+
+    const passwordHash = simpleHash(password);
     
     const { data, error } = await supabase
       .from('users')
@@ -67,7 +77,7 @@ export const loginUser = async (nickname: string, password: string) => {
       throw new Error('Ваш акаунт заблоковано');
     }
 
-    const isValidPassword = await verifyPassword(password, user.password_hash);
+    const isValidPassword = simpleHash(password) === user.password_hash;
     if (!isValidPassword) {
       throw new Error('Невірний пароль');
     }

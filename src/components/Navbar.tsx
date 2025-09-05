@@ -111,7 +111,7 @@ const Navbar = () => {
 
           {/* Desktop Navigation Menu */}
           <div className="hidden lg:flex items-center gap-6">
-            <Link to="/categories" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/categories" className="text-muted-foreground hover:text-accent transition-all duration-300 hover:scale-105 transform-gpu">
               Категорії
             </Link>
             <NavigationMenu>

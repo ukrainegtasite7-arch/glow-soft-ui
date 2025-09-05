@@ -35,17 +35,17 @@ const Hero = () => {
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <Button 
                 size="lg" 
-                className="btn-accent rounded-2xl group"
+                className="btn-accent rounded-2xl group transform-gpu transition-all duration-300 hover:scale-105 hover:shadow-glow active:scale-95"
                 onClick={() => window.location.href = '/categories'}
               >
                 Переглянути категорії
-                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-2 transition-all duration-300" />
               </Button>
               
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="rounded-2xl border-border hover:bg-background-secondary"
+                className="rounded-2xl border-border hover:bg-background-secondary transform-gpu transition-all duration-300 hover:scale-105 hover:shadow-md active:scale-95"
               >
                 Створити оголошення
               </Button>
