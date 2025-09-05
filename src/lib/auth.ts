@@ -13,15 +13,24 @@ export interface AuthState {
   loading: boolean;
 }
 
-// Simple hash function for passwords (for demo purposes)
+// Simple hash function for passwords
 const simpleHash = (str: string): string => {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
     hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32bit integer
+    hash = hash & hash;
   }
-  return hash.toString();
+  return Math.abs(hash).toString(16);
+};
+
+// Set user context for RLS
+const setUserContext = async (userId: string) => {
+  await supabase.rpc('set_config', {
+    setting_name: 'app.current_user_id',
+    setting_value: userId,
+    is_local: false
+  });
 };
 
 // Register user
@@ -54,10 +63,11 @@ export const registerUser = async (nickname: string, password: string) => {
 
     if (error) throw error;
     
-    // Set session
+    // Set user context and session
+    await setUserContext(data.id);
     localStorage.setItem('skoropad_user', JSON.stringify(data));
     return { user: data, error: null };
-  } catch (error) {
+  } catch (error: any) {
     return { user: null, error: error.message };
   }
 };
@@ -82,10 +92,11 @@ export const loginUser = async (nickname: string, password: string) => {
       throw new Error('Невірний пароль');
     }
 
-    // Set session
+    // Set user context and session
+    await setUserContext(user.id);
     localStorage.setItem('skoropad_user', JSON.stringify(user));
     return { user, error: null };
-  } catch (error) {
+  } catch (error: any) {
     return { user: null, error: error.message };
   }
 };
@@ -106,7 +117,15 @@ export const getCurrentUser = (): User | null => {
 };
 
 // Check if user has permission
-export const hasPermission = (user: User | null, requiredRole: string[]): boolean => {
+export const hasPermission = (user: User | null, requiredRoles: string[]): boolean => {
   if (!user || user.is_banned) return false;
-  return requiredRole.includes(user.role);
+  return requiredRoles.includes(user.role);
+};
+
+// Initialize user context on app start
+export const initializeUserContext = async () => {
+  const user = getCurrentUser();
+  if (user) {
+    await setUserContext(user.id);
+  }
 };

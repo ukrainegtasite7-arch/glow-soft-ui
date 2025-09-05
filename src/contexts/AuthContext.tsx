@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, getCurrentUser } from '@/lib/auth';
+import { User, getCurrentUser, initializeUserContext } from '@/lib/auth';
 
 interface AuthContextType {
   user: User | null;
@@ -24,6 +24,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const currentUser = getCurrentUser();
     setUser(currentUser);
+    if (currentUser) {
+      initializeUserContext();
+    }
     setLoading(false);
   }, []);
 

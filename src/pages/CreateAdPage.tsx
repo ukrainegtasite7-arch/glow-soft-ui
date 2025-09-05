@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Upload, X } from 'lucide-react';
+import { ArrowLeft, Upload, X, Plus } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -17,41 +17,83 @@ const CreateAdPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [images, setImages] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     category: '',
     subcategory: '',
     title: '',
     description: '',
     discord_contact: '',
-    telegram_contact: '',
-    images: [] as string[]
+    telegram_contact: ''
   });
 
   const categories = {
     'automobiles': {
       name: 'Автомобілі',
       subcategories: [
-        'sale', 'trucks', 'vinyls', 'parts', 'numbers', 'car-rental', 'truck-rental'
+        { value: 'sale', name: 'Продаж Автомобілі' },
+        { value: 'trucks', name: 'Продаж вантажівок' },
+        { value: 'vinyls', name: 'Продаж Вініли' },
+        { value: 'parts', name: 'Продаж Деталі' },
+        { value: 'numbers', name: 'Продаж Номера' },
+        { value: 'car-rental', name: 'Оренда автомобіля' },
+        { value: 'truck-rental', name: 'Оренда вантажівок' }
       ]
     },
     'clothing': {
       name: 'Одяг',
-      subcategories: ['sale', 'accessories', 'backpacks']
+      subcategories: [
+        { value: 'sale', name: 'Продаж одягу' },
+        { value: 'accessories', name: 'Продаж аксесуарів' },
+        { value: 'backpacks', name: 'Продаж рюкзаків' }
+      ]
     },
     'real-estate': {
       name: 'Нерухомість',
-      subcategories: ['business', 'apartments', 'houses', 'greenhouses']
+      subcategories: [
+        { value: 'business', name: 'Продаж бізнесу' },
+        { value: 'apartments', name: 'Продаж квартир' },
+        { value: 'houses', name: 'Продаж приватних будинків' },
+        { value: 'greenhouses', name: 'Оренда теплиць' }
+      ]
     },
     'other': {
       name: 'Інше',
-      subcategories: ['misc']
+      subcategories: [
+        { value: 'misc', name: 'Різне' }
+      ]
     }
+  };
+
+  const handleImageAdd = () => {
+    if (images.length < 10) {
+      const imageUrl = prompt('Введіть URL зображення:');
+      if (imageUrl && imageUrl.trim()) {
+        setImages([...images, imageUrl.trim()]);
+      }
+    } else {
+      toast.error('Максимум 10 зображень');
+    }
+  };
+
+  const handleImageRemove = (index: number) => {
+    setImages(images.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
       toast.error('Увійдіть в акаунт для створення оголошення');
+      return;
+    }
+
+    if (!formData.category || !formData.subcategory || !formData.title || !formData.description) {
+      toast.error('Заповніть всі обов\'язкові поля');
+      return;
+    }
+
+    if (!formData.discord_contact && !formData.telegram_contact) {
+      toast.error('Вкажіть хоча б один контакт (Discord або Telegram)');
       return;
     }
 
@@ -65,9 +107,9 @@ const CreateAdPage = () => {
           subcategory: formData.subcategory,
           title: formData.title,
           description: formData.description,
-          discord_contact: formData.discord_contact,
-          telegram_contact: formData.telegram_contact,
-          images: formData.images,
+          discord_contact: formData.discord_contact || null,
+          telegram_contact: formData.telegram_contact || null,
+          images: images,
           is_vip: user.role === 'vip'
         }]);
 
@@ -75,8 +117,8 @@ const CreateAdPage = () => {
 
       toast.success('Оголошення створено успішно!');
       navigate('/');
-    } catch (error) {
-      toast.error('Помилка при створенні оголошення');
+    } catch (error: any) {
+      toast.error('Помилка при створенні оголошення: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -109,7 +151,7 @@ const CreateAdPage = () => {
             <Button
               variant="ghost"
               onClick={() => navigate(-1)}
-              className="mb-6"
+              className="mb-6 hover:scale-105 transition-transform"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Назад
@@ -122,7 +164,7 @@ const CreateAdPage = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="category">Категорія</Label>
+                  <Label htmlFor="category">Категорія *</Label>
                   <Select
                     value={formData.category}
                     onValueChange={(value) => setFormData({ ...formData, category: value, subcategory: '' })}
@@ -139,7 +181,7 @@ const CreateAdPage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="subcategory">Підкатегорія</Label>
+                  <Label htmlFor="subcategory">Підкатегорія *</Label>
                   <Select
                     value={formData.subcategory}
                     onValueChange={(value) => setFormData({ ...formData, subcategory: value })}
@@ -149,8 +191,8 @@ const CreateAdPage = () => {
                       <SelectValue placeholder="Оберіть підкатегорію" />
                     </SelectTrigger>
                     <SelectContent>
-                      {formData.category && categories[formData.category]?.subcategories.map((sub) => (
-                        <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                      {formData.category && categories[formData.category as keyof typeof categories]?.subcategories.map((sub) => (
+                        <SelectItem key={sub.value} value={sub.value}>{sub.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -164,10 +206,13 @@ const CreateAdPage = () => {
                   disabled
                   className="rounded-2xl bg-muted"
                 />
+                {user.role === 'vip' && (
+                  <p className="text-sm text-accent">⭐ VIP статус - ваше оголошення буде виділено</p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="title">Назва оголошення</Label>
+                <Label htmlFor="title">Назва оголошення *</Label>
                 <Input
                   id="title"
                   value={formData.title}
@@ -179,7 +224,7 @@ const CreateAdPage = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Опис оголошення</Label>
+                <Label htmlFor="description">Опис оголошення *</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
@@ -214,26 +259,49 @@ const CreateAdPage = () => {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label>Фото (до 10 штук)</Label>
-                <div className="border-2 border-dashed border-border rounded-2xl p-8 text-center">
-                  <Upload className="w-8 h-8 mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-muted-foreground">Перетягніть фото сюди або натисніть для вибору</p>
-                  <p className="text-sm text-muted-foreground mt-2">Максимум 10 фото</p>
+              <div className="space-y-4">
+                <Label>Зображення (до 10 штук)</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {images.map((image, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={image}
+                        alt={`Зображення ${index + 1}`}
+                        className="w-full h-24 object-cover rounded-xl border"
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://via.placeholder.com/150x100?text=Помилка';
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => handleImageRemove(index)}
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ))}
+                  {images.length < 10 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="h-24 rounded-xl border-dashed hover:scale-105 transition-transform"
+                      onClick={handleImageAdd}
+                    >
+                      <Plus className="w-6 h-6" />
+                    </Button>
+                  )}
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  Натисніть на кнопку "+" щоб додати зображення за URL
+                </p>
               </div>
-
-              {user.role === 'vip' && (
-                <div className="bg-accent/10 border border-accent/20 rounded-2xl p-4">
-                  <p className="text-accent font-medium">
-                    🌟 VIP статус активний! Ваше оголошення буде виділено та показано зверху.
-                  </p>
-                </div>
-              )}
 
               <Button
                 type="submit"
-                className="w-full btn-accent rounded-2xl"
+                className="w-full btn-accent rounded-2xl hover:scale-105 transition-transform"
                 disabled={loading}
               >
                 {loading ? 'Створення...' : 'Створити оголошення'}

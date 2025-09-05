@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Menu, X, User, LogOut } from 'lucide-react';
+import { Search, Menu, X, User, LogOut, Plus, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
-import { logoutUser } from '@/lib/auth';
+import { logoutUser, hasPermission } from '@/lib/auth';
 import AuthModal from './AuthModal';
 import { toast } from '@/components/ui/sonner';
 import {
@@ -143,6 +143,28 @@ const Navbar = () => {
             {/* Auth Section */}
             {user ? (
               <div className="flex items-center gap-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => window.location.href = '/create-ad'}
+                  className="rounded-2xl hover:scale-105 transition-transform"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Створити оголошення
+                </Button>
+                
+                {hasPermission(user, ['admin', 'moderator']) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => window.location.href = '/admin'}
+                    className="rounded-2xl hover:scale-105 transition-transform"
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    Адмін панель
+                  </Button>
+                )}
+                
                 <span className="text-sm text-muted-foreground">
                   Привіт, <span className="font-medium text-foreground">{user.nickname}</span>
                   {user.role !== 'user' && (
@@ -207,22 +229,49 @@ const Navbar = () => {
 
             {/* Mobile Auth */}
             {user ? (
-              <div className="flex items-center justify-between bg-background-secondary rounded-2xl px-4 py-3">
-                <span className="text-sm">
-                  {user.nickname}
-                  {user.role !== 'user' && (
-                    <span className="ml-2 px-2 py-1 text-xs bg-accent text-accent-foreground rounded-full">
-                      {user.role.toUpperCase()}
-                    </span>
-                  )}
-                </span>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between bg-background-secondary rounded-2xl px-4 py-3">
+                  <span className="text-sm">
+                    {user.nickname}
+                    {user.role !== 'user' && (
+                      <span className="ml-2 px-2 py-1 text-xs bg-accent text-accent-foreground rounded-full">
+                        {user.role.toUpperCase()}
+                      </span>
+                    )}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleLogout}
+                  >
+                    Вийти
+                  </Button>
+                </div>
+                
                 <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleLogout}
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    window.location.href = '/create-ad';
+                  }}
+                  className="w-full btn-accent rounded-2xl"
                 >
-                  Вийти
+                  <Plus className="w-4 h-4 mr-2" />
+                  Створити оголошення
                 </Button>
+                
+                {hasPermission(user, ['admin', 'moderator']) && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      window.location.href = '/admin';
+                    }}
+                    className="w-full rounded-2xl"
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    Адмін панель
+                  </Button>
+                )}
               </div>
             ) : (
               <Button
