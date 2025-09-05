@@ -1,17 +1,10 @@
 import { motion } from 'framer-motion';
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 
 const Footer = () => {
-  const socialLinks = [
-    { icon: Facebook, href: '#', label: 'Facebook' },
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Twitter, href: '#', label: 'Twitter' },
-  ];
-
   const footerLinks = {
-    'Каталог': ['Смартфони', 'Ноутбуки', 'Навушники', 'Планшети', 'Аксесуари'],
-    'Компанія': ['Про нас', 'Доставка', 'Оплата', 'Гарантія', 'Повернення'],
-    'Підтримка': ['Контакти', 'FAQ', 'Відгуки', 'Блог', 'Новини']
+    'Каталог': ['Автомобілі', 'Одяг', 'Нерухомість', 'Інше'],
+    'VIP статус': ['Купівля VIP статусу за телеграмом @TheDuma']
   };
 
   return (
@@ -26,12 +19,12 @@ const Footer = () => {
               transition={{ duration: 0.5 }}
               className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent"
             >
-              TechStore
+              Skoropad
             </motion.div>
             
             <p className="text-muted-foreground max-w-sm">
-              Найкращий магазин електроніки в Україні. Офіційні товари, 
-              конкурентні ціни та якісний сервіс.
+              Найкраща платформа для розміщення оголошень в Україні. 
+              Швидко, зручно та безпечно.
             </p>
 
             {/* Contact Info */}
@@ -42,27 +35,12 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3 text-muted-foreground">
                 <Mail className="w-4 h-4" />
-                <span>info@techstore.ua</span>
+                <span>info@skoropad.ua</span>
               </div>
               <div className="flex items-center space-x-3 text-muted-foreground">
                 <MapPin className="w-4 h-4" />
                 <span>Київ, вул. Хрещатик, 1</span>
               </div>
-            </div>
-
-            {/* Social Links */}
-            <div className="flex space-x-4">
-              {socialLinks.map(({ icon: Icon, href, label }) => (
-                <motion.a
-                  key={label}
-                  href={href}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-10 h-10 bg-background rounded-2xl flex items-center justify-center text-muted-foreground hover:text-accent hover:bg-accent/10 transition-colors"
-                >
-                  <Icon className="w-4 h-4" />
-                </motion.a>
-              ))}
             </div>
           </div>
 
@@ -100,7 +78,7 @@ const Footer = () => {
           className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0"
         >
           <p className="text-muted-foreground text-sm">
-            © 2024 TechStore. Всі права захищені.
+            © 2024 Skoropad. Всі права захищені.
           </p>
           <div className="flex space-x-6 text-sm">
             <a href="#" className="text-muted-foreground hover:text-accent transition-colors">

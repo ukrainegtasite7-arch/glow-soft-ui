@@ -20,22 +20,25 @@ const Hero = () => {
             </div>
 
             <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-              Сучасна{' '}
+              Найкраща{' '}
               <span className="bg-gradient-primary bg-clip-text text-transparent">
-                техніка
+                платформа
               </span>
-              <br />
-              для вашого життя
+              <br />для оголошень
             </h1>
 
             <p className="text-lg text-muted-foreground max-w-md">
-              Відкрийте для себе найновіші технології та гаджети з офіційною гарантією 
-              та безкоштовною доставкою по всій Україні.
+              Розмістіть своє оголошення швидко та зручно. Від автомобілів до нерухомості - 
+              знайдіть або продайте все що потрібно.
             </p>
 
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-              <Button size="lg" className="btn-accent rounded-2xl group">
-                Переглянути каталог
+              <Button 
+                size="lg" 
+                className="btn-accent rounded-2xl group"
+                onClick={() => window.location.href = '/categories'}
+              >
+                Переглянути категорії
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Button>
               
@@ -44,19 +47,19 @@ const Hero = () => {
                 size="lg" 
                 className="rounded-2xl border-border hover:bg-background-secondary"
               >
-                Дізнатися більше
+                Створити оголошення
               </Button>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-8 pt-8">
               <div>
-                <div className="text-2xl font-bold text-primary">10К+</div>
-                <div className="text-sm text-muted-foreground">Задоволених клієнтів</div>
+                <div className="text-2xl font-bold text-primary">5К+</div>
+                <div className="text-sm text-muted-foreground">Активних користувачів</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-primary">500+</div>
-                <div className="text-sm text-muted-foreground">Товарів в наявності</div>
+                <div className="text-2xl font-bold text-primary">1К+</div>
+                <div className="text-sm text-muted-foreground">Оголошень щодня</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-primary">24/7</div>
@@ -92,7 +95,7 @@ const Hero = () => {
                   </div>
                   <div>
                     <div className="font-semibold">Висока якість</div>
-                    <div className="text-sm text-muted-foreground">Офіційна гарантія</div>
+                    <div className="text-sm text-muted-foreground">Перевірені оголошення</div>
                   </div>
                 </div>
               </motion.div>
@@ -111,8 +114,8 @@ const Hero = () => {
                 className="absolute -bottom-8 -right-8 bg-card rounded-3xl p-6 shadow-soft-lg border border-border/50"
               >
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-accent">Безкоштовно</div>
-                  <div className="text-sm text-muted-foreground">Доставка по Україні</div>
+                  <div className="text-2xl font-bold text-accent">Швидко</div>
+                  <div className="text-sm text-muted-foreground">Розміщення оголошень</div>
                 </div>
               </motion.div>
 

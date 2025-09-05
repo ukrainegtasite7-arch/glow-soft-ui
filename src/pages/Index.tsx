@@ -22,10 +22,10 @@ const Index = () => {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Про <span className="bg-gradient-primary bg-clip-text text-transparent">TechStore</span>
+              Про <span className="bg-gradient-primary bg-clip-text text-transparent">Skoropad</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Ваш надійний партнер у світі сучасних технологій та якісних товарів
+              Ваш надійний партнер у світі онлайн оголошень та торгівлі
             </p>
           </motion.div>
 
@@ -36,9 +36,9 @@ const Index = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="bg-card rounded-3xl p-8 shadow-soft border border-border/50"
             >
-              <h3 className="text-xl font-semibold mb-4">Широкий асортимент</h3>
+              <h3 className="text-xl font-semibold mb-4">Різноманітні категорії</h3>
               <p className="text-muted-foreground">
-                Від автомобілів до одягу - знайдіть все необхідне в одному місці
+                Від автомобілів до нерухомості - розмістіть або знайдіть все необхідне
               </p>
             </motion.div>
 
@@ -48,9 +48,9 @@ const Index = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="bg-card rounded-3xl p-8 shadow-soft border border-border/50"
             >
-              <h3 className="text-xl font-semibold mb-4">Якість та надійність</h3>
+              <h3 className="text-xl font-semibold mb-4">Безпека та надійність</h3>
               <p className="text-muted-foreground">
-                Ми пропонуємо тільки перевірені товари від надійних постачальників
+                Модерація оголошень та система рейтингів для вашої безпеки
               </p>
             </motion.div>
 
@@ -62,7 +62,7 @@ const Index = () => {
             >
               <h3 className="text-xl font-semibold mb-4">Підтримка 24/7</h3>
               <p className="text-muted-foreground">
-                Наша команда завжди готова допомогти вам у виборі та покупці
+                Наша команда завжди готова допомогти вам з розміщенням оголошень
               </p>
             </motion.div>
           </div>

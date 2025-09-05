@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Menu, X } from 'lucide-react';
+import { Search, Menu, X, User, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/contexts/AuthContext';
+import { logoutUser } from '@/lib/auth';
+import AuthModal from './AuthModal';
+import { toast } from '@/components/ui/sonner';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -16,6 +20,23 @@ import { Link } from 'react-router-dom';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const { user, setUser } = useAuth();
+
+  const handleLogout = () => {
+    logoutUser();
+    setUser(null);
+    toast.success('Ви вийшли з акаунту');
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // TODO: Implement search functionality
+      toast.info(`Пошук: ${searchQuery}`);
+    }
+  };
 
   const menuItems = [
     {
@@ -71,19 +92,21 @@ const Navbar = () => {
               className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent cursor-pointer"
               whileHover={{ scale: 1.05 }}
             >
-              TechStore
+              Skoropad
             </motion.div>
           </Link>
 
           {/* Desktop Search */}
           <div className="hidden md:flex items-center flex-1 max-w-lg mx-8">
-            <div className="relative w-full">
+            <form onSubmit={handleSearch} className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
-                placeholder="Пошук товарів..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Пошук оголошень..."
                 className="pl-10 border-0 bg-background-secondary rounded-2xl focus:glow-accent"
               />
-            </div>
+            </form>
           </div>
 
           {/* Desktop Navigation Menu */}
@@ -99,12 +122,12 @@ const Navbar = () => {
                       {menu.title}
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
-                      <div className="grid w-[400px] gap-3 p-4">
+                      <div className="grid w-[400px] gap-3 p-4 bg-background border border-border/50 rounded-2xl shadow-soft">
                         {menu.items.map((item) => (
                           <NavigationMenuLink key={item.href} asChild>
                             <Link
                               to={item.href}
-                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                              className="block select-none space-y-1 rounded-2xl p-3 leading-none no-underline outline-none transition-colors hover:bg-background-secondary hover:text-foreground focus:bg-background-secondary focus:text-foreground"
                             >
                               <div className="text-sm font-medium leading-none">{item.title}</div>
                             </Link>
@@ -116,6 +139,36 @@ const Navbar = () => {
                 ))}
               </NavigationMenuList>
             </NavigationMenu>
+
+            {/* Auth Section */}
+            {user ? (
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-muted-foreground">
+                  Привіт, <span className="font-medium text-foreground">{user.nickname}</span>
+                  {user.role !== 'user' && (
+                    <span className="ml-1 px-2 py-1 text-xs bg-accent text-accent-foreground rounded-full">
+                      {user.role.toUpperCase()}
+                    </span>
+                  )}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleLogout}
+                  className="rounded-full"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            ) : (
+              <Button
+                onClick={() => setIsAuthModalOpen(true)}
+                className="btn-accent rounded-2xl"
+              >
+                <User className="w-4 h-4 mr-2" />
+                Вхід
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -142,13 +195,44 @@ const Navbar = () => {
         >
           <div className="pt-4 pb-2 space-y-3">
             {/* Mobile Search */}
-            <div className="relative">
+            <form onSubmit={handleSearch} className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
-                placeholder="Пошук товарів..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Пошук оголошень..."
                 className="pl-10 border-0 bg-background-secondary rounded-2xl"
               />
-            </div>
+            </form>
+
+            {/* Mobile Auth */}
+            {user ? (
+              <div className="flex items-center justify-between bg-background-secondary rounded-2xl px-4 py-3">
+                <span className="text-sm">
+                  {user.nickname}
+                  {user.role !== 'user' && (
+                    <span className="ml-2 px-2 py-1 text-xs bg-accent text-accent-foreground rounded-full">
+                      {user.role.toUpperCase()}
+                    </span>
+                  )}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLogout}
+                >
+                  Вийти
+                </Button>
+              </div>
+            ) : (
+              <Button
+                onClick={() => setIsAuthModalOpen(true)}
+                className="w-full btn-accent rounded-2xl"
+              >
+                <User className="w-4 h-4 mr-2" />
+                Вхід
+              </Button>
+            )}
 
             <Link
               to="/categories"
@@ -181,6 +265,11 @@ const Navbar = () => {
           </div>
         </motion.div>
       </div>
+
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+      />
     </motion.nav>
   );
 };
