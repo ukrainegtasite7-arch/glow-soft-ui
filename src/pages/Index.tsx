@@ -1,18 +1,9 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
-import ProductCard from '@/components/ProductCard';
 import Footer from '@/components/Footer';
-import { Button } from '@/components/ui/button';
-import { products, categories } from '@/data/products';
 
 const Index = () => {
-  const [selectedCategory, setSelectedCategory] = useState('Всі товари');
-  
-  const filteredProducts = selectedCategory === 'Всі товари' 
-    ? products 
-    : products.filter(product => product.category === selectedCategory);
 
   return (
     <div className="min-h-screen bg-background">
@@ -21,7 +12,7 @@ const Index = () => {
       {/* Hero Section */}
       <Hero />
 
-      {/* Categories Section */}
+      {/* About Section */}
       <section className="py-16 bg-background-secondary">
         <div className="container mx-auto px-6">
           <motion.div
@@ -31,62 +22,50 @@ const Index = () => {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Наш <span className="bg-gradient-primary bg-clip-text text-transparent">каталог</span>
+              Про <span className="bg-gradient-primary bg-clip-text text-transparent">TechStore</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Відкрийте для себе найширший асортимент електроніки та гаджетів
+              Ваш надійний партнер у світі сучасних технологій та якісних товарів
             </p>
           </motion.div>
 
-          {/* Category Filter */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex flex-wrap justify-center gap-3 mb-12"
-          >
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                onClick={() => setSelectedCategory(category)}
-                className={
-                  selectedCategory === category
-                    ? "btn-accent rounded-2xl"
-                    : "rounded-2xl border-border hover:bg-background-secondary"
-                }
-              >
-                {category}
-              </Button>
-            ))}
-          </motion.div>
-
-          {/* Products Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProducts.map((product, index) => (
-              <ProductCard
-                key={product.id}
-                {...product}
-                index={index}
-              />
-            ))}
-          </div>
-
-          {/* Load More */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="text-center mt-12"
-          >
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="rounded-2xl border-border hover:bg-background-secondary px-8"
+          <div className="grid md:grid-cols-3 gap-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="bg-card rounded-3xl p-8 shadow-soft border border-border/50"
             >
-              Завантажити більше товарів
-            </Button>
-          </motion.div>
+              <h3 className="text-xl font-semibold mb-4">Широкий асортимент</h3>
+              <p className="text-muted-foreground">
+                Від автомобілів до одягу - знайдіть все необхідне в одному місці
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="bg-card rounded-3xl p-8 shadow-soft border border-border/50"
+            >
+              <h3 className="text-xl font-semibold mb-4">Якість та надійність</h3>
+              <p className="text-muted-foreground">
+                Ми пропонуємо тільки перевірені товари від надійних постачальників
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="bg-card rounded-3xl p-8 shadow-soft border border-border/50"
+            >
+              <h3 className="text-xl font-semibold mb-4">Підтримка 24/7</h3>
+              <p className="text-muted-foreground">
+                Наша команда завжди готова допомогти вам у виборі та покупці
+              </p>
+            </motion.div>
+          </div>
         </div>
       </section>
 
