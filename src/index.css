@@ -2,41 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Ukrainian E-commerce Design System - Soft UI with Deep Blue & Turquoise */
 
 @layer base {
   :root {
+    /* Base Colors */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background-secondary: 210 14% 97%;
+    --foreground: 214 31% 16%;
 
+    /* Card System */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 214 31% 16%;
+    --card-shadow: 210 20% 85%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    /* Deep Blue Navy Accents */
+    --primary: 211 100% 8%;
+    --primary-light: 213 83% 15%;
+    --primary-foreground: 0 0% 100%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Turquoise/Blue Highlights */
+    --accent: 194 100% 42%;
+    --accent-light: 194 86% 58%;
+    --accent-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Interactive Elements */
+    --secondary: 210 14% 97%;
+    --secondary-foreground: 214 31% 16%;
+    
+    --muted: 210 14% 97%;
+    --muted-foreground: 215 19% 35%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Borders and Inputs */
+    --border: 214 20% 91%;
+    --input: 214 20% 91%;
+    --ring: 194 100% 42%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* UI Enhancements */
+    --glow: 194 100% 42%;
+    --shadow-soft: 210 20% 85%;
+    --radius: 1.5rem;
+    --radius-lg: 2rem;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(211 100% 8%), hsl(213 83% 15%));
+    --gradient-accent: linear-gradient(135deg, hsl(194 100% 42%), hsl(194 86% 58%));
+    --gradient-soft: linear-gradient(135deg, hsl(0 0% 100%), hsl(210 14% 97%));
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-glow: box-shadow 0.3s ease, transform 0.3s ease;
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +115,73 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@layer components {
+  /* Glow Effects */
+  .glow-accent {
+    box-shadow: 0 0 20px hsl(var(--glow) / 0.3);
+  }
+  
+  .glow-accent-lg {
+    box-shadow: 0 0 40px hsl(var(--glow) / 0.4);
+  }
+
+  /* Soft Shadows */
+  .shadow-soft {
+    box-shadow: 0 10px 40px -10px hsl(var(--shadow-soft) / 0.3);
+  }
+
+  .shadow-soft-lg {
+    box-shadow: 0 20px 60px -15px hsl(var(--shadow-soft) / 0.4);
+  }
+
+  /* Interactive Elements */
+  .interactive-scale {
+    transition: var(--transition-smooth);
+  }
+  
+  .interactive-scale:hover {
+    transform: scale(1.02);
+  }
+
+  /* Button Variants */
+  .btn-primary {
+    background: var(--gradient-primary);
+    color: hsl(var(--primary-foreground));
+    border-radius: var(--radius);
+    transition: var(--transition-glow);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 8px 25px hsl(var(--primary) / 0.3);
+    transform: translateY(-2px);
+  }
+
+  .btn-accent {
+    background: var(--gradient-accent);
+    color: hsl(var(--accent-foreground));
+    border-radius: var(--radius);
+    transition: var(--transition-glow);
+  }
+
+  .btn-accent:hover {
+    box-shadow: 0 8px 25px hsl(var(--accent) / 0.4);
+    transform: translateY(-2px);
+  }
+
+  /* Card Styles */
+  .card-soft {
+    background: var(--gradient-soft);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    transition: var(--transition-smooth);
+  }
+
+  .card-soft:hover {
+    box-shadow: 0 20px 50px -15px hsl(var(--shadow-soft) / 0.4);
+    transform: translateY(-4px);
   }
 }
