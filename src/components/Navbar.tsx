@@ -121,8 +121,8 @@ const Navbar = () => {
                     <NavigationMenuTrigger className="text-muted-foreground hover:text-foreground bg-transparent">
                       {menu.title}
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <div className="grid w-[400px] gap-3 p-4 bg-background border border-border/50 rounded-2xl shadow-soft">
+                    <NavigationMenuContent className="bg-background border border-border/50 rounded-2xl shadow-soft z-50">
+                      <div className="grid w-[400px] gap-3 p-4">
                         {menu.items.map((item) => (
                           <NavigationMenuLink key={item.href} asChild>
                             <Link

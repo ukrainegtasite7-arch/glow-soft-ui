@@ -3,7 +3,6 @@ import { Mail, Phone, MapPin } from 'lucide-react';
 
 const Footer = () => {
   const footerLinks = {
-    'Каталог': ['Автомобілі', 'Одяг', 'Нерухомість', 'Інше'],
     'VIP статус': ['Купівля VIP статусу за телеграмом @TheDuma']
   };
 

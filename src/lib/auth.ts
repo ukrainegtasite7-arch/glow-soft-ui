@@ -24,13 +24,14 @@ const simpleHash = (str: string): string => {
   return Math.abs(hash).toString(16);
 };
 
-// Set user context for RLS
+// Set user context for RLS via RPC
 const setUserContext = async (userId: string) => {
-  await supabase.rpc('set_config', {
-    setting_name: 'app.current_user_id',
-    setting_value: userId,
-    is_local: false
-  });
+  try {
+    await supabase.rpc('set_app_user', { user_id: userId });
+  } catch (e) {
+    // Silent fail is OK; policies will deny if not set
+    console.warn('Failed to set user context', e);
+  }
 };
 
 // Register user
