@@ -1,141 +1,180 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Star } from 'lucide-react';
+import { Search, TrendingUp, Users, Shield, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/components/ui/sonner';
 
 const Hero = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) {
+      toast.error('Введіть пошуковий запит');
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('advertisements')
+        .select(`
+          *,
+          users (nickname, role)
+        `)
+        .or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`)
+        .order('is_vip', { ascending: false })
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (error) throw error;
+
+      // Для демонстрації показуємо кількість знайдених результатів
+      toast.success(`Знайдено ${data?.length || 0} оголошень`);
+      
+      // В реальній реалізації тут би був перехід на сторінку результатів пошуку
+      console.log('Search results:', data);
+    } catch (error: any) {
+      toast.error('Помилка пошуку: ' + error.message);
+    }
+  };
+
   return (
-    <section className="relative bg-gradient-soft overflow-hidden">
-      <div className="container mx-auto px-6 py-20 md:py-32">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Text Content */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-8"
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background via-background-secondary to-background">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-primary opacity-20 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-accent opacity-20 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="container mx-auto px-6 text-center relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-4xl mx-auto"
+        >
+          <motion.h1 
+            className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <div className="inline-flex items-center space-x-2 bg-accent/10 text-accent px-4 py-2 rounded-full">
-              <Star className="w-4 h-4 fill-current" />
-              <span className="text-sm font-medium">Найкращі ціни в Україні</span>
-            </div>
+            Ласкаво просимо до{' '}
+            <span className="bg-gradient-primary bg-clip-text text-transparent">
+              Skoropad
+            </span>
+          </motion.h1>
 
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-              Найкраща{' '}
-              <span className="bg-gradient-primary bg-clip-text text-transparent">
-                платформа
-              </span>
-              <br />для оголошень
-            </h1>
+          <motion.p 
+            className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            Найкраща платформа для розміщення та пошуку оголошень в Україні
+          </motion.p>
 
-            <p className="text-lg text-muted-foreground max-w-md">
-              Розмістіть своє оголошення швидко та зручно. Від автомобілів до нерухомості - 
-              знайдіть або продайте все що потрібно.
-            </p>
-
-            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-              <Button 
-                size="lg" 
-                className="btn-accent rounded-2xl group transform-gpu transition-all duration-300 hover:scale-105 hover:shadow-glow active:scale-95"
-                onClick={() => window.location.href = '/categories'}
+          {/* Search Bar */}
+          <motion.div
+            className="max-w-lg mx-auto mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            <form onSubmit={handleSearch} className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Пошук оголошень..."
+                className="pl-12 py-6 text-lg border-0 bg-white/10 backdrop-blur-sm rounded-2xl focus:glow-accent"
+              />
+              <Button
+                type="submit"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 btn-accent"
               >
-                Переглянути категорії
-                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-2 transition-all duration-300" />
+                Пошук
               </Button>
-              
+            </form>
+          </motion.div>
+
+          {/* CTA Buttons */}
+          <motion.div
+            className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+          >
+            <Link to="/categories">
               <Button 
-                variant="outline" 
                 size="lg" 
-                className="rounded-2xl border-border hover:bg-background-secondary transform-gpu transition-all duration-300 hover:scale-105 hover:shadow-md active:scale-95"
+                className="btn-accent rounded-2xl px-8 py-6 text-lg hover:scale-105 transition-transform"
+              >
+                Переглянути каталог
+              </Button>
+            </Link>
+            
+            <Link to="/create-ad">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="rounded-2xl px-8 py-6 text-lg hover:scale-105 transition-transform border-accent/20 hover:border-accent"
               >
                 Створити оголошення
               </Button>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 pt-8">
-              <div>
-                <div className="text-2xl font-bold text-primary">5К+</div>
-                <div className="text-sm text-muted-foreground">Активних користувачів</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-primary">1К+</div>
-                <div className="text-sm text-muted-foreground">Оголошень щодня</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-primary">24/7</div>
-                <div className="text-sm text-muted-foreground">Підтримка клієнтів</div>
-              </div>
-            </div>
+            </Link>
           </motion.div>
 
-          {/* Visual Element */}
+          {/* Stats */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
+            className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1 }}
           >
-            <div className="relative">
-              {/* Floating Cards */}
-              <motion.div
-                animate={{ 
-                  y: [0, -10, 0],
-                  rotate: [0, 1, 0]
-                }}
-                transition={{ 
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                className="absolute -top-8 -left-8 bg-card rounded-3xl p-6 shadow-soft-lg border border-border/50"
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-gradient-accent rounded-2xl flex items-center justify-center">
-                    <Star className="w-6 h-6 text-accent-foreground" />
-                  </div>
-                  <div>
-                    <div className="font-semibold">Висока якість</div>
-                    <div className="text-sm text-muted-foreground">Перевірені оголошення</div>
-                  </div>
-                </div>
-              </motion.div>
-
-              <motion.div
-                animate={{ 
-                  y: [0, 10, 0],
-                  rotate: [0, -1, 0]
-                }}
-                transition={{ 
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1
-                }}
-                className="absolute -bottom-8 -right-8 bg-card rounded-3xl p-6 shadow-soft-lg border border-border/50"
-              >
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-accent">Швидко</div>
-                  <div className="text-sm text-muted-foreground">Розміщення оголошень</div>
-                </div>
-              </motion.div>
-
-              {/* Main Visual */}
-              <div className="bg-gradient-primary rounded-3xl p-12 glow-accent-lg">
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="bg-background/20 rounded-2xl p-4 backdrop-blur-sm">
-                    <div className="w-full h-16 bg-background/30 rounded-xl"></div>
-                  </div>
-                  <div className="bg-background/20 rounded-2xl p-4 backdrop-blur-sm">
-                    <div className="w-full h-16 bg-background/30 rounded-xl"></div>
-                  </div>
-                  <div className="col-span-2 bg-background/20 rounded-2xl p-4 backdrop-blur-sm">
-                    <div className="w-full h-20 bg-background/30 rounded-xl"></div>
-                  </div>
-                </div>
-              </div>
+            <div className="text-center">
+              <TrendingUp className="w-8 h-8 mx-auto mb-2 text-accent" />
+              <div className="text-2xl font-bold">1000+</div>
+              <div className="text-sm text-muted-foreground">Оголошень</div>
+            </div>
+            <div className="text-center">
+              <Users className="w-8 h-8 mx-auto mb-2 text-accent" />
+              <div className="text-2xl font-bold">500+</div>
+              <div className="text-sm text-muted-foreground">Користувачів</div>
+            </div>
+            <div className="text-center">
+              <Shield className="w-8 h-8 mx-auto mb-2 text-accent" />
+              <div className="text-2xl font-bold">100%</div>
+              <div className="text-sm text-muted-foreground">Безпека</div>
+            </div>
+            <div className="text-center">
+              <Star className="w-8 h-8 mx-auto mb-2 text-accent" />
+              <div className="text-2xl font-bold">24/7</div>
+              <div className="text-sm text-muted-foreground">Підтримка</div>
             </div>
           </motion.div>
-        </div>
+
+          {/* VIP Banner */}
+          <motion.div
+            className="mt-16 p-6 bg-gradient-accent rounded-3xl border border-accent/20"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 1.2 }}
+          >
+            <h3 className="text-xl font-bold mb-2 text-accent-foreground">
+              Хочете виділити своє оголошення?
+            </h3>
+            <p className="text-accent-foreground/80 mb-4">
+              Отримайте VIP статус та ваші оголошення завжди будуть зверху!
+            </p>
+            <p className="text-sm text-accent-foreground/60">
+              Для купівлі VIP статусу напишіть у телеграм: <strong>@TheDuma</strong>
+            </p>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

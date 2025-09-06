@@ -138,7 +138,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      set_app_user: {
+        Args: { user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       user_role: "user" | "vip" | "moderator" | "admin"

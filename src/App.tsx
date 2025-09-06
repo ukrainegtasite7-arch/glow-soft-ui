@@ -6,10 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import AutomobilesPage from "./pages/AutomobilesPage";
-import ClothingPage from "./pages/ClothingPage";
-import RealEstatePage from "./pages/RealEstatePage";
-import OtherPage from "./pages/OtherPage";
+import SubcategoryPage from "./pages/SubcategoryPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import AdminPanel from "./pages/AdminPanel";
 import CreateAdPage from "./pages/CreateAdPage";
@@ -26,10 +23,10 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/categories" element={<CategoriesPage />} />
-            <Route path="/automobiles/*" element={<AutomobilesPage />} />
-            <Route path="/clothing/*" element={<ClothingPage />} />
-            <Route path="/real-estate/*" element={<RealEstatePage />} />
-            <Route path="/other/*" element={<OtherPage />} />
+            <Route path="/automobiles/:subcategory" element={<SubcategoryPage />} />
+            <Route path="/clothing/:subcategory" element={<SubcategoryPage />} />
+            <Route path="/real-estate/:subcategory" element={<SubcategoryPage />} />
+            <Route path="/other/:subcategory" element={<SubcategoryPage />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/create-ad" element={<CreateAdPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
