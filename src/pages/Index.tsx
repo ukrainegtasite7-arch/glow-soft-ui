@@ -58,7 +58,7 @@ const Index = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="bg-card rounded-3xl p-8 shadow-soft border border-border/50 hover:shadow-soft-lg hover:border-accent/20 transition-all duration-300 transform-gpu cursor-pointer"
             >
-              <h3 className="text-xl font-semibold mb-4">BETA TEST</h3>
+              <h3 className="text-xl font-semibold mb-4">BETA TESгT</h3>
               <p className="text-muted-foreground">
                 BETA TEST
               </p>
