@@ -41,9 +41,9 @@ const Index = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="bg-card rounded-3xl p-8 shadow-soft border border-border/50 hover:shadow-soft-lg hover:border-accent/20 transition-all duration-300 transform-gpu cursor-pointer"
             >
-              <h3 className="text-xl font-semibold mb-4">Різноманітні категорії</h3>
+              <h3 className="text-xl font-semibold mb-4">BETA TEST</h3>
               <p className="text-muted-foreground">
-                Від автомобілів до нерухомості - розмістіть або знайдіть все необхідне
+               BETA TEST
               </p>
             </motion.div>
 
@@ -58,9 +58,9 @@ const Index = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="bg-card rounded-3xl p-8 shadow-soft border border-border/50 hover:shadow-soft-lg hover:border-accent/20 transition-all duration-300 transform-gpu cursor-pointer"
             >
-              <h3 className="text-xl font-semibold mb-4">Безпека та надійність</h3>
+              <h3 className="text-xl font-semibold mb-4">BETA TEST</h3>
               <p className="text-muted-foreground">
-                Модерація оголошень та система рейтингів для вашої безпеки
+                BETA TEST
               </p>
             </motion.div>
 
@@ -75,9 +75,9 @@ const Index = () => {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="bg-card rounded-3xl p-8 shadow-soft border border-border/50 hover:shadow-soft-lg hover:border-accent/20 transition-all duration-300 transform-gpu cursor-pointer"
             >
-              <h3 className="text-xl font-semibold mb-4">Підтримка 24/7</h3>
+              <h3 className="text-xl font-semibold mb-4">BETA TEST</h3>
               <p className="text-muted-foreground">
-                Наша команда завжди готова допомогти вам з розміщенням оголошень
+                BETA TEST
               </p>
             </motion.div>
           </div>
