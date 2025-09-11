@@ -99,19 +99,17 @@ const CreateAdPage = () => {
 
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from('advertisements')
-        .insert([{
-          user_id: user.id,
-          category: formData.category,
-          subcategory: formData.subcategory,
-          title: formData.title,
-          description: formData.description,
-          discord_contact: formData.discord_contact || null,
-          telegram_contact: formData.telegram_contact || null,
-          images: images,
-          is_vip: user.role === 'vip'
-        }]);
+      const { data, error } = await supabase.rpc('create_advertisement', {
+        p_user_id: user.id,
+        p_category: formData.category,
+        p_subcategory: formData.subcategory,
+        p_title: formData.title,
+        p_description: formData.description,
+        p_images: images,
+        p_discord: formData.discord_contact || null,
+        p_telegram: formData.telegram_contact || null,
+        p_is_vip: user.role === 'vip'
+      });
 
       if (error) throw error;
 

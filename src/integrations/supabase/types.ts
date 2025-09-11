@@ -138,6 +138,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_advertisement: {
+        Args: {
+          p_category: string
+          p_description: string
+          p_discord?: string
+          p_images?: string[]
+          p_is_vip?: boolean
+          p_subcategory: string
+          p_telegram?: string
+          p_title: string
+          p_user_id: string
+        }
+        Returns: {
+          category: string
+          created_at: string | null
+          description: string
+          discord_contact: string | null
+          id: string
+          images: string[] | null
+          is_vip: boolean | null
+          subcategory: string
+          telegram_contact: string | null
+          title: string
+          user_id: string | null
+        }
+      }
       set_app_user: {
         Args: { user_id: string }
         Returns: undefined
