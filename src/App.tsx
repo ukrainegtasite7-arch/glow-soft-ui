@@ -23,10 +23,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/categories" element={<CategoriesPage />} />
-            <Route path="/automobiles/:subcategory" element={<SubcategoryPage />} />
-            <Route path="/clothing/:subcategory" element={<SubcategoryPage />} />
-            <Route path="/real-estate/:subcategory" element={<SubcategoryPage />} />
-            <Route path="/other/:subcategory" element={<SubcategoryPage />} />
+            <Route path="/:category/:subcategory" element={<SubcategoryPage />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/create-ad" element={<CreateAdPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
