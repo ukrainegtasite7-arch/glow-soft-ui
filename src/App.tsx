@@ -10,6 +10,7 @@ import SubcategoryPage from "./pages/SubcategoryPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import AdminPanel from "./pages/AdminPanel";
 import CreateAdPage from "./pages/CreateAdPage";
+import AdvertisementPage from "./pages/AdvertisementPage";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/:category/:subcategory" element={<SubcategoryPage />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/create-ad" element={<CreateAdPage />} />
+            <Route path="/advertisement/:id" element={<AdvertisementPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

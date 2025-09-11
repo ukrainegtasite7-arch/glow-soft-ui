@@ -37,21 +37,30 @@ const SubcategoryPage = () => {
     'other': 'Інше'
   };
 
-  const subcategoryTitles: Record<string, string> = {
-    'sale': 'Продаж Автомобілі',
-    'trucks': 'Продаж вантажівок',
-    'vinyls': 'Продаж Вініли',
-    'parts': 'Продаж Деталі',
-    'numbers': 'Продаж Номера',
-    'car-rental': 'Оренда автомобіля',
-    'truck-rental': 'Оренда вантажівок',
-    'accessories': 'Продаж аксесуарів',
-    'backpacks': 'Продаж рюкзаків',
-    'business': 'Продаж бізнесу',
-    'apartments': 'Продаж квартир',
-    'houses': 'Продаж приватних будинків',
-    'greenhouses': 'Оренда теплиць',
-    'misc': 'Різне'
+  const subcategoryTitles: Record<string, Record<string, string>> = {
+    'automobiles': {
+      'sale': 'Продаж Автомобілі',
+      'trucks': 'Продаж вантажівок',
+      'vinyls': 'Продаж Вініли',
+      'parts': 'Продаж Деталі',
+      'numbers': 'Продаж Номера',
+      'car-rental': 'Оренда автомобіля',
+      'truck-rental': 'Оренда вантажівок'
+    },
+    'clothing': {
+      'sale': 'Продаж одягу',
+      'accessories': 'Продаж аксесуарів',
+      'backpacks': 'Продаж рюкзаків'
+    },
+    'real-estate': {
+      'business': 'Продаж бізнесу',
+      'apartments': 'Продаж квартир',
+      'houses': 'Продаж приватних будинків',
+      'greenhouses': 'Оренда теплиць'
+    },
+    'other': {
+      'misc': 'Різне'
+    }
   };
 
   useEffect(() => {
@@ -70,6 +79,7 @@ const SubcategoryPage = () => {
         .eq('category', category)
         .eq('subcategory', subcategory)
         .order('is_vip', { ascending: false })
+        .order('users(role)', { ascending: true })
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -82,7 +92,7 @@ const SubcategoryPage = () => {
   };
 
   const categoryTitle = categoryTitles[category || ''] || 'Категорія';
-  const subcategoryTitle = subcategoryTitles[subcategory || ''] || 'Підкатегорія';
+  const subcategoryTitle = subcategoryTitles[category || '']?.[subcategory || ''] || 'Підкатегорія';
 
   return (
     <div className="min-h-screen bg-background">
@@ -137,84 +147,117 @@ const SubcategoryPage = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: index * 0.1 }}
                   >
-                    <Card className={`group hover:shadow-soft-lg transition-all duration-300 hover:scale-105 transform-gpu cursor-pointer ${ad.is_vip ? 'border-accent shadow-accent/20' : ''}`}>
-                      <CardContent className="p-0">
-                        {/* Image */}
-                        {ad.images && ad.images.length > 0 && (
-                          <div className="relative overflow-hidden rounded-t-2xl">
-                            <img
-                              src={ad.images[0]}
-                              alt={ad.title}
-                              className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                              onError={(e) => {
-                                e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Без+фото';
-                              }}
-                            />
-                            {ad.is_vip && (
-                              <Badge className="absolute top-3 right-3 bg-accent text-accent-foreground">
-                                <Crown className="w-3 h-3 mr-1" />
-                                VIP
-                              </Badge>
-                            )}
-                          </div>
-                        )}
-                        
-                        <div className="p-6">
-                          <div className="flex items-start justify-between mb-3">
-                            <h3 className="font-semibold text-lg group-hover:text-accent transition-colors line-clamp-2">
-                              {ad.title}
-                            </h3>
-                          </div>
-                          
-                          <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
-                            {ad.description}
-                          </p>
-                          
-                          <div className="space-y-2 mb-4">
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <span className="font-medium">{ad.users?.nickname}</span>
-                              {ad.users?.role !== 'user' && (
-                                <Badge variant="outline" className="text-xs">
-                                  {ad.users?.role === 'vip' ? 'VIP' : 
-                                   ad.users?.role === 'moderator' ? 'Модератор' : 
-                                   ad.users?.role === 'admin' ? 'Адмін' : ''}
-                                </Badge>
+                    <Link to={`/advertisement/${ad.id}`}>
+                      <Card className={`group hover:shadow-soft-lg transition-all duration-300 hover:scale-105 transform-gpu cursor-pointer ${
+                        ad.is_vip 
+                          ? 'border-yellow-400 shadow-yellow-400/20 bg-gradient-to-br from-yellow-50/5 to-yellow-100/10' 
+                          : ad.users?.role === 'admin'
+                          ? 'border-red-400 shadow-red-400/20 bg-gradient-to-br from-red-50/5 to-red-100/10'
+                          : ''
+                      }`}>
+                        <CardContent className="p-0">
+                          {/* Image */}
+                          {ad.images && ad.images.length > 0 && (
+                            <div className="relative overflow-hidden rounded-t-2xl">
+                              <img
+                                src={ad.images[0]}
+                                alt={ad.title}
+                                className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                                onError={(e) => {
+                                  e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Без+фото';
+                                }}
+                              />
+                              <div className="absolute top-3 right-3 flex gap-2">
+                                {ad.is_vip && (
+                                  <Badge variant="vip" className="shadow-lg">
+                                    <Crown className="w-3 h-3 mr-1" />
+                                    VIP
+                                  </Badge>
+                                )}
+                                {ad.users?.role === 'admin' && (
+                                  <Badge variant="admin" className="shadow-lg">
+                                    АДМІН
+                                  </Badge>
+                                )}
+                              </div>
+                              {ad.images.length > 1 && (
+                                <div className="absolute top-3 left-3 bg-black/70 text-white px-2 py-1 rounded-full text-xs">
+                                  +{ad.images.length - 1} фото
+                                </div>
                               )}
                             </div>
+                          )}
+                          
+                          <div className="p-6">
+                            <div className="flex items-start justify-between mb-3">
+                              <h3 className="font-semibold text-lg group-hover:text-accent transition-colors line-clamp-2">
+                                {ad.title}
+                              </h3>
+                            </div>
                             
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                              <Calendar className="w-3 h-3" />
-                              {new Date(ad.created_at).toLocaleDateString('uk-UA')}
+                            <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
+                              {ad.description}
+                            </p>
+                            
+                            <div className="space-y-2 mb-4">
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <span className="font-medium">{ad.users?.nickname}</span>
+                                {ad.users?.role !== 'user' && (
+                                  <Badge 
+                                    variant={
+                                      ad.users?.role === 'admin' ? 'admin' :
+                                      ad.users?.role === 'vip' ? 'vip' : 'outline'
+                                    }
+                                    className="text-xs"
+                                  >
+                                    {ad.users?.role === 'vip' ? 'VIP' : 
+                                     ad.users?.role === 'moderator' ? 'Модератор' : 
+                                     ad.users?.role === 'admin' ? 'Адмін' : ''}
+                                  </Badge>
+                                )}
+                              </div>
+                              
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <Calendar className="w-3 h-3" />
+                                {new Date(ad.created_at).toLocaleDateString('uk-UA')}
+                              </div>
+                            </div>
+                            
+                            <div className="flex gap-2">
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="flex-1 text-xs hover:scale-105 transition-transform"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                }}
+                              >
+                                Детальніше
+                              </Button>
+                              {(ad.discord_contact || ad.telegram_contact) && (
+                                <Button 
+                                  size="sm" 
+                                  className="flex-1 text-xs btn-accent hover:scale-105 transition-transform"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    if (ad.telegram_contact) {
+                                      window.open(`https://t.me/${ad.telegram_contact?.replace('@', '')}`, '_blank');
+                                    } else if (ad.discord_contact) {
+                                      navigator.clipboard.writeText(ad.discord_contact);
+                                    }
+                                  }}
+                                >
+                                  <MessageCircle className="w-3 h-3 mr-1" />
+                                  Контакт
+                                </Button>
+                              )}
                             </div>
                           </div>
-                          
-                          <div className="flex gap-2">
-                            {ad.discord_contact && (
-                              <Button 
-                                size="sm" 
-                                variant="outline" 
-                                className="flex-1 text-xs hover:scale-105 transition-transform"
-                                onClick={() => navigator.clipboard.writeText(ad.discord_contact!)}
-                              >
-                                <MessageCircle className="w-3 h-3 mr-1" />
-                                Discord
-                              </Button>
-                            )}
-                            {ad.telegram_contact && (
-                              <Button 
-                                size="sm" 
-                                variant="outline" 
-                                className="flex-1 text-xs hover:scale-105 transition-transform"
-                                onClick={() => window.open(`https://t.me/${ad.telegram_contact?.replace('@', '')}`, '_blank')}
-                              >
-                                <MessageCircle className="w-3 h-3 mr-1" />
-                                Telegram
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                        </CardContent>
+                      </Card>
+                    </Link>
                   </motion.div>
                 ))}
               </div>

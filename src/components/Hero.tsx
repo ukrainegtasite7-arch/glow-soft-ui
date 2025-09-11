@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, TrendingUp, Users, Shield, Star } from 'lucide-react';
+import { Search, TrendingUp, Users, Shield, Star, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/sonner';
+import { useAuth } from '@/contexts/AuthContext';
+import { hasPermission } from '@/lib/auth';
 
 const Hero = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const { user } = useAuth();
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -174,6 +177,26 @@ const Hero = () => {
               Для купівлі VIP статусу напишіть у телеграм: <strong>@TheDuma</strong>
             </p>
           </motion.div>
+
+          {user && hasPermission(user, ['admin']) && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.4 }}
+              className="mt-8"
+            >
+              <Link to="/admin">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="rounded-2xl px-8 py-6 text-lg hover:scale-105 transition-transform border-red-500/20 hover:border-red-500 text-red-600 hover:text-red-500"
+                >
+                  <Settings className="w-5 h-5 mr-2" />
+                  Адмін панель
+                </Button>
+              </Link>
+            </motion.div>
+          )}
         </motion.div>
       </div>
     </section>

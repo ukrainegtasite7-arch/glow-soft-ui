@@ -168,7 +168,11 @@ const Navbar = () => {
                 <span className="text-sm text-muted-foreground">
                   Привіт, <span className="font-medium text-foreground">{user.nickname}</span>
                   {user.role !== 'user' && (
-                    <span className="ml-1 px-2 py-1 text-xs bg-accent text-accent-foreground rounded-full">
+                    <span className={`ml-1 px-2 py-1 text-xs rounded-full ${
+                      user.role === 'admin' ? 'bg-red-600 text-white' :
+                      user.role === 'vip' ? 'bg-yellow-500 text-black' :
+                      'bg-accent text-accent-foreground'
+                    }`}>
                       {user.role.toUpperCase()}
                     </span>
                   )}
@@ -234,7 +238,11 @@ const Navbar = () => {
                   <span className="text-sm">
                     {user.nickname}
                     {user.role !== 'user' && (
-                      <span className="ml-2 px-2 py-1 text-xs bg-accent text-accent-foreground rounded-full">
+                      <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                        user.role === 'admin' ? 'bg-red-600 text-white' :
+                        user.role === 'vip' ? 'bg-yellow-500 text-black' :
+                        'bg-accent text-accent-foreground'
+                      }`}>
                         {user.role.toUpperCase()}
                       </span>
                     )}

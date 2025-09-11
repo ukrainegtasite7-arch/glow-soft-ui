@@ -88,7 +88,7 @@ const CreateAdPage = () => {
 
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user?.id}_${Date.now()}.${fileExt}`;
+      const fileName = `${user?.id}/${Date.now()}.${fileExt}`;
       
       const { data, error } = await supabase.storage
         .from('advertisement-images')
