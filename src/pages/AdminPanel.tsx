@@ -35,7 +35,14 @@ const AdminPanel = () => {
       return;
     }
     
-    fetchData();
+    // Ensure user context is set for RLS
+    const initAndFetch = async () => {
+      const { initializeUserContext } = await import('@/lib/auth');
+      await initializeUserContext();
+      fetchData();
+    };
+    
+    initAndFetch();
   }, [user, navigate]);
 
   const fetchData = async () => {
