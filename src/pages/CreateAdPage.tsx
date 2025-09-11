@@ -18,6 +18,7 @@ const CreateAdPage = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
+  const [uploadingImages, setUploadingImages] = useState<boolean[]>([]);
   const [formData, setFormData] = useState({
     category: '',
     subcategory: '',
@@ -65,6 +66,51 @@ const CreateAdPage = () => {
     }
   };
 
+  const handleFileUpload = async (file: File) => {
+    if (images.length >= 10) {
+      toast.error('Максимум 10 зображень');
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Можна завантажувати лише зображення');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Розмір файлу не повинен перевищувати 5MB');
+      return;
+    }
+
+    const newUploadingImages = [...uploadingImages];
+    newUploadingImages.push(true);
+    setUploadingImages(newUploadingImages);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user?.id}_${Date.now()}.${fileExt}`;
+      
+      const { data, error } = await supabase.storage
+        .from('advertisement-images')
+        .upload(fileName, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('advertisement-images')
+        .getPublicUrl(fileName);
+
+      setImages([...images, publicUrl]);
+      toast.success('Зображення завантажено успішно!');
+    } catch (error: any) {
+      toast.error('Помилка завантаження: ' + error.message);
+    } finally {
+      const newUploadingImages = [...uploadingImages];
+      newUploadingImages.pop();
+      setUploadingImages(newUploadingImages);
+    }
+  };
+
   const handleImageAdd = () => {
     if (images.length < 10) {
       const imageUrl = prompt('Введіть URL зображення:');
@@ -76,7 +122,20 @@ const CreateAdPage = () => {
     }
   };
 
-  const handleImageRemove = (index: number) => {
+  const handleImageRemove = async (index: number) => {
+    const imageUrl = images[index];
+    // If it's a Supabase storage URL, try to delete it
+    if (imageUrl.includes('supabase.co/storage')) {
+      try {
+        const urlParts = imageUrl.split('/');
+        const fileName = urlParts[urlParts.length - 1];
+        await supabase.storage
+          .from('advertisement-images')
+          .remove([fileName]);
+      } catch (error) {
+        console.warn('Failed to delete image from storage:', error);
+      }
+    }
     setImages(images.filter((_, i) => i !== index));
   };
 
@@ -281,19 +340,53 @@ const CreateAdPage = () => {
                       </Button>
                     </div>
                   ))}
-                  {images.length < 10 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="h-24 rounded-xl border-dashed hover:scale-105 transition-transform"
-                      onClick={handleImageAdd}
-                    >
-                      <Plus className="w-6 h-6" />
-                    </Button>
+                  
+                  {/* Loading placeholders for uploading images */}
+                  {uploadingImages.map((_, index) => (
+                    <div key={`uploading-${index}`} className="relative">
+                      <div className="w-full h-24 bg-muted rounded-xl border animate-pulse flex items-center justify-center">
+                        <Upload className="w-6 h-6 text-muted-foreground animate-spin" />
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {(images.length + uploadingImages.length) < 10 && (
+                    <>
+                      {/* File upload button */}
+                      <label className="cursor-pointer">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              handleFileUpload(file);
+                              e.target.value = '';
+                            }
+                          }}
+                        />
+                        <div className="h-24 rounded-xl border-dashed border-2 border-border hover:border-accent flex flex-col items-center justify-center hover:scale-105 transition-transform bg-background hover:bg-muted">
+                          <Upload className="w-5 h-5 mb-1 text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground">Завантажити</span>
+                        </div>
+                      </label>
+                      
+                      {/* URL input button */}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="h-24 rounded-xl border-dashed hover:scale-105 transition-transform flex flex-col"
+                        onClick={handleImageAdd}
+                      >
+                        <Plus className="w-5 h-5 mb-1" />
+                        <span className="text-xs">URL</span>
+                      </Button>
+                    </>
                   )}
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Натисніть на кнопку "+" щоб додати зображення за URL
+                  Завантажте зображення з комп'ютера або введіть URL. Максимальний розмір файлу: 5MB
                 </p>
               </div>
 
