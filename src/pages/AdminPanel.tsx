@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, Ban, Shield, Crown, Trash2, Eye, Users, FileText, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Search, Ban, Shield, Crown, Trash2, Eye, Users, FileText, BarChart3, Download } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -162,6 +162,47 @@ const AdminPanel = () => {
     }
   };
 
+  const handlePromoteAd = async (adId: string, isVip: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('advertisements')
+        .update({ is_vip: !isVip })
+        .eq('id', adId);
+
+      if (error) throw error;
+
+      await logAction(isVip ? 'demote_advertisement' : 'promote_advertisement', undefined, { advertisement_id: adId });
+      
+      toast.success(isVip ? 'VIP статус знято' : 'Надано VIP статус');
+      fetchData();
+    } catch (error: any) {
+      toast.error('Помилка зміни статусу: ' + error.message);
+    }
+  };
+
+  const exportData = async () => {
+    try {
+      const data = {
+        users: users.map(u => ({ ...u, password_hash: undefined })),
+        advertisements: advertisements,
+        logs: logs,
+        timestamp: new Date().toISOString()
+      };
+      
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `skoropad-data-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      toast.success('Дані експортовано успішно');
+    } catch (error: any) {
+      toast.error('Помилка експорту: ' + error.message);
+    }
+  };
+
   const filteredAds = advertisements.filter(ad =>
     ad.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     ad.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -208,6 +249,16 @@ const AdminPanel = () => {
               <Badge variant="outline" className="text-sm">
                 {user.role === 'admin' ? 'Адміністратор' : 'Модератор'}
               </Badge>
+            </div>
+
+            <div className="flex justify-between items-center mb-6">
+              <div></div>
+              {user.role === 'admin' && (
+                <Button onClick={exportData} variant="outline" className="hover:scale-105 transition-transform">
+                  <Download className="w-4 h-4 mr-2" />
+                  Експорт даних
+                </Button>
+              )}
             </div>
 
             <Tabs defaultValue="stats" className="space-y-6">
@@ -385,6 +436,14 @@ const AdminPanel = () => {
                             </div>
                           </div>
                           <div className="flex gap-2 ml-4">
+                            <Button
+                              size="sm"
+                              variant={ad.is_vip ? "outline" : "default"}
+                              onClick={() => handlePromoteAd(ad.id, ad.is_vip)}
+                              className="hover:scale-105 transition-transform"
+                            >
+                              <Crown className="w-4 h-4" />
+                            </Button>
                             <Button
                               size="sm"
                               variant="destructive"

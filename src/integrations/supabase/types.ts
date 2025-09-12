@@ -65,6 +65,7 @@ export type Database = {
           id: string
           images: string[] | null
           is_vip: boolean | null
+          price: number | null
           subcategory: string
           telegram_contact: string | null
           title: string
@@ -78,6 +79,7 @@ export type Database = {
           id?: string
           images?: string[] | null
           is_vip?: boolean | null
+          price?: number | null
           subcategory: string
           telegram_contact?: string | null
           title: string
@@ -91,6 +93,7 @@ export type Database = {
           id?: string
           images?: string[] | null
           is_vip?: boolean | null
+          price?: number | null
           subcategory?: string
           telegram_contact?: string | null
           title?: string
@@ -139,17 +142,30 @@ export type Database = {
     }
     Functions: {
       create_advertisement: {
-        Args: {
-          p_category: string
-          p_description: string
-          p_discord?: string
-          p_images?: string[]
-          p_is_vip?: boolean
-          p_subcategory: string
-          p_telegram?: string
-          p_title: string
-          p_user_id: string
-        }
+        Args:
+          | {
+              p_category: string
+              p_description: string
+              p_discord?: string
+              p_images?: string[]
+              p_is_vip?: boolean
+              p_price?: number
+              p_subcategory: string
+              p_telegram?: string
+              p_title: string
+              p_user_id: string
+            }
+          | {
+              p_category: string
+              p_description: string
+              p_discord?: string
+              p_images?: string[]
+              p_is_vip?: boolean
+              p_subcategory: string
+              p_telegram?: string
+              p_title: string
+              p_user_id: string
+            }
         Returns: {
           category: string
           created_at: string | null
@@ -158,6 +174,7 @@ export type Database = {
           id: string
           images: string[] | null
           is_vip: boolean | null
+          price: number | null
           subcategory: string
           telegram_contact: string | null
           title: string

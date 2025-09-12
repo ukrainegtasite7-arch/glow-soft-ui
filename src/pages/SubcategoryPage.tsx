@@ -19,6 +19,7 @@ interface Advertisement {
   telegram_contact?: string;
   is_vip: boolean;
   created_at: string;
+  price?: number;
   users?: {
     nickname: string;
     role: string;
@@ -70,7 +71,7 @@ const SubcategoryPage = () => {
   const fetchAdvertisements = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from('advertisements')
         .select(`
           *,
@@ -78,11 +79,27 @@ const SubcategoryPage = () => {
         `)
         .eq('category', category)
         .eq('subcategory', subcategory)
-        .order('is_vip', { ascending: false })
-        .order('users(role)', { ascending: true })
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+
+      // Sort manually to prioritize admin, then VIP, then regular posts
+      data = (data || []).sort((a, b) => {
+        // First sort by user role (admin first)
+        const aRole = a.users?.role || 'user';
+        const bRole = b.users?.role || 'user';
+        
+        if (aRole === 'admin' && bRole !== 'admin') return -1;
+        if (bRole === 'admin' && aRole !== 'admin') return 1;
+        
+        // Then sort by VIP status
+        if (a.is_vip && !b.is_vip) return -1;
+        if (b.is_vip && !a.is_vip) return 1;
+        
+        // Finally sort by creation date (newest first)
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+
       setAdvertisements(data || []);
     } catch (error: any) {
       toast.error('Помилка завантаження оголошень: ' + error.message);
@@ -193,6 +210,11 @@ const SubcategoryPage = () => {
                               <h3 className="font-semibold text-lg group-hover:text-accent transition-colors line-clamp-2">
                                 {ad.title}
                               </h3>
+                              {ad.price && (
+                                <div className="text-accent font-bold text-lg ml-2">
+                                  {ad.price.toLocaleString('uk-UA')} ₴
+                                </div>
+                              )}
                             </div>
                             
                             <p className="text-muted-foreground text-sm mb-4 line-clamp-3">

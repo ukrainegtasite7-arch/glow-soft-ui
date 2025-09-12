@@ -25,7 +25,8 @@ const CreateAdPage = () => {
     title: '',
     description: '',
     discord_contact: '',
-    telegram_contact: ''
+    telegram_contact: '',
+    price: ''
   });
 
   const categories = {
@@ -167,7 +168,8 @@ const CreateAdPage = () => {
         p_images: images,
         p_discord: formData.discord_contact || null,
         p_telegram: formData.telegram_contact || null,
-        p_is_vip: user.role === 'vip'
+        p_is_vip: user.role === 'vip' || user.role === 'admin' || user.role === 'moderator',
+        p_price: formData.price ? parseFloat(formData.price) : null
       });
 
       if (error) throw error;
@@ -289,6 +291,20 @@ const CreateAdPage = () => {
                   className="rounded-2xl min-h-32"
                   placeholder="Детальний опис вашого оголошення"
                   required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="price">Ціна (грн)</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={formData.price}
+                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                  className="rounded-2xl"
+                  placeholder="Вкажіть ціну (необов'язково)"
                 />
               </div>
 

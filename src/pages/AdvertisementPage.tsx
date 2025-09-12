@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, MessageCircle, Crown, Shield } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Calendar, MessageCircle, Crown, Shield, Edit, Trash2 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/sonner';
+import { useAuth } from '@/contexts/AuthContext';
+import { hasPermission, initializeUserContext } from '@/lib/auth';
+import EditAdModal from '@/components/EditAdModal';
 
 interface Advertisement {
   id: string;
@@ -20,6 +23,10 @@ interface Advertisement {
   telegram_contact?: string;
   is_vip: boolean;
   created_at: string;
+  price?: number;
+  user_id: string;
+  category: string;
+  subcategory: string;
   users?: {
     nickname: string;
     role: string;
@@ -28,12 +35,21 @@ interface Advertisement {
 
 const AdvertisementPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [advertisement, setAdvertisement] = useState<Advertisement | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
-    fetchAdvertisement();
-  }, [id]);
+    const initAndFetch = async () => {
+      if (user) {
+        await initializeUserContext();
+      }
+      fetchAdvertisement();
+    };
+    initAndFetch();
+  }, [id, user]);
 
   const fetchAdvertisement = async () => {
     try {
@@ -55,6 +71,28 @@ const AdvertisementPage = () => {
       setLoading(false);
     }
   };
+
+  const handleDelete = async () => {
+    if (!advertisement || !user) return;
+    
+    if (!confirm('Ви впевнені, що хочете видалити це оголошення?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('advertisements')
+        .delete()
+        .eq('id', advertisement.id);
+
+      if (error) throw error;
+
+      toast.success('Оголошення видалено успішно');
+      navigate('/');
+    } catch (error: any) {
+      toast.error('Помилка видалення: ' + error.message);
+    }
+  };
+
+  const canEdit = user && (user.id === advertisement?.user_id || hasPermission(user, ['admin', 'moderator']));
 
   if (loading) {
     return (
@@ -167,36 +205,70 @@ const AdvertisementPage = () => {
                       {advertisement.title}
                     </h1>
                     
-                    <div className="flex items-center gap-4 text-muted-foreground">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-foreground">{advertisement.users?.nickname}</span>
-                        {advertisement.users?.role !== 'user' && (
-                          <Badge 
-                            variant={
-                              advertisement.users?.role === 'admin' ? 'admin' :
-                              advertisement.users?.role === 'vip' ? 'vip' : 'outline'
-                            }
+                   <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4 text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-foreground">{advertisement.users?.nickname}</span>
+                          {advertisement.users?.role !== 'user' && (
+                            <Badge 
+                              variant={
+                                advertisement.users?.role === 'admin' ? 'admin' :
+                                advertisement.users?.role === 'vip' ? 'vip' : 'outline'
+                              }
+                            >
+                              {advertisement.users?.role === 'vip' ? 'VIP' : 
+                               advertisement.users?.role === 'moderator' ? 'Модератор' : 
+                               advertisement.users?.role === 'admin' ? 'Адмін' : ''}
+                            </Badge>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4" />
+                          {new Date(advertisement.created_at).toLocaleDateString('uk-UA', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </div>
+                      </div>
+
+                      {canEdit && (
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setIsEditModalOpen(true)}
+                            className="hover:scale-105 transition-transform"
                           >
-                            {advertisement.users?.role === 'vip' ? 'VIP' : 
-                             advertisement.users?.role === 'moderator' ? 'Модератор' : 
-                             advertisement.users?.role === 'admin' ? 'Адмін' : ''}
-                          </Badge>
-                        )}
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        {new Date(advertisement.created_at).toLocaleDateString('uk-UA', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </div>
+                            <Edit className="w-4 h-4 mr-2" />
+                            Редагувати
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={handleDelete}
+                            className="hover:scale-105 transition-transform"
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Видалити
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
                   
+                  {/* Price */}
+                  {advertisement.price && (
+                    <div className="mb-6">
+                      <div className="text-3xl font-bold text-accent">
+                        {advertisement.price.toLocaleString('uk-UA')} грн
+                      </div>
+                    </div>
+                  )}
+
                   {/* Description */}
                   <div className="mb-8">
                     <h2 className="text-xl font-semibold mb-4">Опис</h2>
@@ -243,6 +315,16 @@ const AdvertisementPage = () => {
       </section>
 
       <Footer />
+
+      <EditAdModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        advertisement={advertisement}
+        onSuccess={() => {
+          fetchAdvertisement();
+          setIsEditModalOpen(false);
+        }}
+      />
     </div>
   );
 };

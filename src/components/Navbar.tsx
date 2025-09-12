@@ -154,15 +154,16 @@ const Navbar = () => {
                 </Button>
                 
                 {hasPermission(user, ['admin', 'moderator']) && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => window.location.href = '/admin'}
-                    className="rounded-2xl hover:scale-105 transition-transform"
-                  >
-                    <Settings className="w-4 h-4 mr-2" />
-                    Адмін панель
-                  </Button>
+                  <Link to="/admin">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="rounded-2xl hover:scale-105 transition-transform"
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      Адмін панель
+                    </Button>
+                  </Link>
                 )}
                 
                 <span className="text-sm text-muted-foreground">
@@ -268,17 +269,15 @@ const Navbar = () => {
                 </Button>
                 
                 {hasPermission(user, ['admin', 'moderator']) && (
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      window.location.href = '/admin';
-                    }}
-                    className="w-full rounded-2xl"
-                  >
-                    <Settings className="w-4 h-4 mr-2" />
-                    Адмін панель
-                  </Button>
+                  <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
+                    <Button
+                      variant="outline"
+                      className="w-full rounded-2xl"
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      Адмін панель
+                    </Button>
+                  </Link>
                 )}
               </div>
             ) : (
